@@ -16,7 +16,7 @@ gulp.task('watch-changes', function () {
 
 
 gulp.task('mocha', function () {
-    return gulp.src(paths.testOutput + 'tests/' + '**/*.js', {read: false})
+    return gulp.src(paths.testOutput + 'test/' + '**/*.js', {read: false})
          .pipe(mocha({ reporter: 'list' }))
          .on('error', gutil.log);
 });

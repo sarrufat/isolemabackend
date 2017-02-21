@@ -67,8 +67,8 @@ gulp.task('build-typescript-test-code-tests', function () {
     return gulp.src(paths.dtsSrc.concat(paths.testSrc))
         .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(typescript(testTypescriptCompiler))
-        .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '/tests'}))
-        .pipe(gulp.dest(paths.testOutput + '/tests'));
+        .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '/test'}))
+        .pipe(gulp.dest(paths.testOutput + '/test'));
 });
 
 gulp.task('build-typescript-src-code-tests', function () {
