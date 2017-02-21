@@ -1,7 +1,7 @@
 var appRoot = 'src/';
 var outputRoot = 'dist/';
 var outputTestsRoot = 'dist-test/'
-var testRoot = 'tests/';
+var testRoot = 'test/';
 module.exports = {
     root: appRoot,
     source: appRoot + '**/*.ts',
