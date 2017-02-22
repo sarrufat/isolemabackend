@@ -1,0 +1,7 @@
+{
+    "database": {
+        "connection": "mongodb://localhost/isomorphic",
+        "operationTimeout": 12000,
+        "maxRecordsByQuery": 50
+    }
+}

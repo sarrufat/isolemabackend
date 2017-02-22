@@ -14,7 +14,8 @@
     "http-status": "^1.0.1",
     "mongodb": "^2.2.24",
     "morgan": "^1.8.1",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "winston": "^2.3.1"
   },
   "devDependencies": {
     "@types/chai": "^3.4.35",
@@ -22,6 +23,7 @@
     "@types/mocha": "^2.2.39",
     "@types/mongodb": "^2.1.40",
     "@types/node": "^7.0.5",
+    "@types/winston": "^2.2.0",
     "chai": "^3.5.0",
     "del": "^2.2.2",
     "gulp": "^3.9.1",
