@@ -29,7 +29,7 @@ export function getWordLike(likestr: string, callback: (words:  [IWord]) => void
     db.collection(lemarioCol, function(error, words: mongodb.Collection) {
         if (error) { console.error(error); return; }
         let rexp = RegExp(likestr);
-        words.find<IWord>({ word: rexp }).toArray(function(error, words: [IWord]) {
+        words.find<IWord>({ saoWord: rexp }).toArray(function(error, words: [IWord]) {
             if (error) { console.error(error); return; }
             callback(words);
         });
