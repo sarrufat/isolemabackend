@@ -9,13 +9,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.4.7",
     "body-parser": "^1.16.1",
     "express": "^4.14.1",
     "http-status": "^1.0.1",
     "mongodb": "^2.2.24",
     "morgan": "^1.8.1",
     "request": "^2.79.0",
-    "winston": "^2.3.1"
+    "ts-dependency-injection": "^1.2.2",
+    "winston": "^2.3.1",
+    "winston-daily-rotate-file": "^1.4.4"
   },
   "devDependencies": {
     "@types/chai": "^3.4.35",

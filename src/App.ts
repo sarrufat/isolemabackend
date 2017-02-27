@@ -4,6 +4,9 @@ import * as logger from 'morgan';
 import * as bodyParser from 'body-parser';
 import LemaRouter from './routes/IsolemaRouters';
 
+import * as application from './application/application-module';
+
+
 // Creates and configures an ExpressJS web server.
 class App {
 
@@ -14,6 +17,8 @@ class App {
     constructor() {
         this.express = express();
         this.middleware();
+        let app = new application.Manager();
+        app.init();
         this.routes();
     }
 

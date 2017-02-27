@@ -1,11 +1,12 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import * as WordRepository from '../model/IWord'
+import  {WordManager,IWord} from '../model/IWord'
 import * as HTTPSTATUS from 'http-status';
+import {Manager} from '../application/application-module';
 
 
 export class IsolemaRouter {
     router: Router
-
+  //  appManager:Manager;
     /**
      * Initialize the HeroRouter
      */
@@ -13,6 +14,11 @@ export class IsolemaRouter {
         this.router = Router();
         this.init();
     }
+
+  //  public setAppManager() {
+    //  this.appManager = Manager.getInstance();
+    //  console.log( `this.appManage = ${this.appManager}`);
+  //  }
 
     /**
      * GET all Heroes.
@@ -33,7 +39,7 @@ export class IsolemaRouter {
     public getOne(req: Request, res: Response, next: NextFunction) {
         let query = req.params.id;
         console.log(`id = ${req.params.id}`);
-        WordRepository.getWordById(query, function(word: WordRepository.IWord) {
+        Manager.getInstance().getWordManager().getWordById(query, function(word: IWord) {
             if (word) {
                 console.log(`word = ${word.word}`);
                 res.status(200).send({ message: 'Success', status: res.status, word });
@@ -47,7 +53,7 @@ export class IsolemaRouter {
         let query = req.params.query;
         if (query && query.length > 3) {
             console.log(`query = ${req.params.query}`);
-            WordRepository.getWordLike(query, function(words: [WordRepository.IWord]) {
+              Manager.getInstance().getWordManager().getWordLike(query, function(words: [IWord]) {
                 if (words) {
                     res.status(HTTPSTATUS.OK).send({ message: 'Success', status: res.status, words });
                 } else {
@@ -62,7 +68,7 @@ export class IsolemaRouter {
 }
 
 // Create the HeroRouter, and export its configured Express.Router
-const heroRoutes = new IsolemaRouter();
-heroRoutes.init();
+  export const wordManager= new IsolemaRouter();
+  wordManager.init();
 
-export default heroRoutes.router;
+  export default wordManager.router;
