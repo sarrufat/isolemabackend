@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import  {WordManager,IWord} from '../model/IWord'
+import  {WordManager,IWord,ISOWord} from '../model/IWord'
 import * as HTTPSTATUS from 'http-status';
 import {Manager} from '../application/application-module';
 
@@ -35,6 +35,8 @@ export class IsolemaRouter {
         //  this.router.get('/', this.getAll);
         this.router.get('/word/:id', this.getOne);
         this.router.get('/wordLike/:query', this.getWordLike);
+        this.router.get('/isomorphisms/:query', this.getIsomorphisms);
+
     }
     public getOne(req: Request, res: Response, next: NextFunction) {
         let query = req.params.id;
@@ -63,7 +65,22 @@ export class IsolemaRouter {
         } else {
             res.status(HTTPSTATUS.NOT_BAD_REQUEST).send({ message: HTTPSTATUS[400], status: res.status });
         }
+    }
 
+    public getIsomorphisms(req: Request, res: Response, next: NextFunction) {
+        let query = req.params.query;
+        if (query) {
+            console.log(`query = ${req.params.query}`);
+              Manager.getInstance().getWordManager().getIsomorphisms(query, function(result: [ISOWord]) {
+                if (result) {
+                    res.status(HTTPSTATUS.OK).send({ message: 'Success', status: res.status, result });
+                } else {
+                    res.status(HTTPSTATUS.NOT_FOUND).send({ message: 'No word found', status: res.status });
+                }
+            });
+        } else {
+            res.status(HTTPSTATUS.NOT_BAD_REQUEST).send({ message: HTTPSTATUS[400], status: res.status });
+        }
     }
 }
 

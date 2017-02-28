@@ -59,6 +59,7 @@ export class Manager {
     }
     public getWordManager() {
         if( this.wordManager == null) {
+          console.log("instantiating WordManager: " + this.db );
           this.wordManager = new WordManager(this.db);
         }
         return this.wordManager;
