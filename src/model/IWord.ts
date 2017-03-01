@@ -8,9 +8,9 @@ var server = new mongodb.Server('localhost', 27017, [{ auto_reconnect: true }]);
 var db = new mongodb.Db('isomorphic', server, { w: 1 });
 db.open(function() { });
 */
-const lemarioCol = 'lemarioWNumISOS';
+const lemarioCol = 'hashIsomorphisms';
 
-const isocatalogCol = 'isocatalog';
+// const isocatalogCol = 'isocatalog';
 
 const assert = require('assert');
 
@@ -18,17 +18,11 @@ const assert = require('assert');
 export interface IWord {
     _id: mongodb.ObjectID;
     word: string;
-    len: number;
-    saoWord: string;
+    isocode: string;
     isoCount: number;
 }
 
-export interface ISOWord {
-    word: string;
-    isword: string;
-    mapping: string;
-    smapping: string;
-}
+
 
 export class WordManager {
     private db: mongodb.Db;
@@ -36,7 +30,7 @@ export class WordManager {
         this.db = appDb;
     }
     public getWordById(id: string, callback: (word: IWord) => void) {
-      assert.notStrictEqual(this.db , undefined, "db not defined");
+        assert.notStrictEqual(this.db, undefined, "db not defined");
         this.db.collection(lemarioCol, function(error, words: mongodb.Collection) {
             if (error) { console.error(error); return; }
             words.find<IWord>({ _id: new mongodb.ObjectID(id) }).next(function(error, word) {
@@ -49,19 +43,43 @@ export class WordManager {
         this.db.collection(lemarioCol, function(error, words: mongodb.Collection) {
             if (error) { console.error(error); return; }
             let rexp = RegExp(likestr);
-            words.find<IWord>({ saoWord: rexp }).toArray(function(error, words: [IWord]) {
+            words.find<IWord>({ word: rexp }).toArray(function(error, words: [IWord]) {
                 if (error) { console.error(error); return; }
                 callback(words);
             });
         });
     }
-    public getIsomorphisms(aword: string, callback: (found: [ISOWord]) => void) {
-        this.db.collection(isocatalogCol, function(error, collection: mongodb.Collection) {
+    public getExactWord(sword: string, callback: (words: IWord) => void) {
+        this.db.collection(lemarioCol, function(error, words: mongodb.Collection) {
             if (error) { console.error(error); return; }
-            collection.find({word: aword}).toArray(function(error, result:[ISOWord]) {
-              if (error) { console.error(error); return; }
-              callback(result);
+            ;
+            words.find<IWord>({ word: sword }).toArray(function(error, words: [IWord]) {
+                if (error) { console.error(error); return; }
+                if (words.length > 0)
+                    callback(words[0]);
+                else {
+                    callback(Object.create(null));
+
+                }
             });
         });
+    }
+    public getIsomorphisms(aword: string, callback: (found: [IWord]) => void) {
+        this.getExactWord(aword, (found: IWord) => {
+            if (found != null) {
+              console.log( found);
+                this.db.collection(lemarioCol, function(error, collection: mongodb.Collection) {
+                    if (error) { console.error(error); return; }
+                    collection.find({ isocode: found.isocode }).toArray(function(error, result: [IWord]) {
+                        if (error) { console.error(error); return; }
+                        callback(result);
+                    });
+                });
+            } else {
+              console.log("getExactWord  NOT_FOUND");
+              callback(Object.create(null));
+            }
+        });
+
     }
 }

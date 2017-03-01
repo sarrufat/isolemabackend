@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import  {WordManager,IWord,ISOWord} from '../model/IWord'
+import  {WordManager,IWord} from '../model/IWord'
 import * as HTTPSTATUS from 'http-status';
 import {Manager} from '../application/application-module';
 
@@ -71,7 +71,7 @@ export class IsolemaRouter {
         let query = req.params.query;
         if (query) {
             console.log(`query = ${req.params.query}`);
-              Manager.getInstance().getWordManager().getIsomorphisms(query, function(result: [ISOWord]) {
+              Manager.getInstance().getWordManager().getIsomorphisms(query, function(result: [IWord]) {
                 if (result) {
                     res.status(HTTPSTATUS.OK).send({ message: 'Success', status: res.status, result });
                 } else {
