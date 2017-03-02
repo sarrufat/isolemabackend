@@ -14,12 +14,14 @@ const lemarioCol = 'hashIsomorphisms';
 
 const assert = require('assert');
 
+// import {mapWord}  from '../scala/isolemautils-fastopt';
 
 export interface IWord {
     _id: mongodb.ObjectID;
     word: string;
     isocode: string;
     isoCount: number;
+    saoWord: string;
 }
 
 
@@ -43,7 +45,7 @@ export class WordManager {
         this.db.collection(lemarioCol, function(error, words: mongodb.Collection) {
             if (error) { console.error(error); return; }
             let rexp = RegExp(likestr);
-            words.find<IWord>({ word: rexp }).toArray(function(error, words: [IWord]) {
+            words.find<IWord>({ saoWord: rexp }).toArray(function(error, words: [IWord]) {
                 if (error) { console.error(error); return; }
                 callback(words);
             });
@@ -67,7 +69,7 @@ export class WordManager {
     public getIsomorphisms(aword: string, callback: (found: [IWord]) => void) {
         this.getExactWord(aword, (found: IWord) => {
             if (found != null) {
-              console.log( found);
+                console.log(found);
                 this.db.collection(lemarioCol, function(error, collection: mongodb.Collection) {
                     if (error) { console.error(error); return; }
                     collection.find({ isocode: found.isocode }).toArray(function(error, result: [IWord]) {
@@ -76,8 +78,8 @@ export class WordManager {
                     });
                 });
             } else {
-              console.log("getExactWord  NOT_FOUND");
-              callback(Object.create(null));
+                console.log("getExactWord  NOT_FOUND");
+                callback(Object.create(null));
             }
         });
 
