@@ -38,3 +38,9 @@ jspm_packages
 dist/
 dist-test/
 scalajs/target/
+scalajs/project/project/
+scalajs/project/target/streams/compile/compileIncremental/$global/streams/export
+scalajs/project/target/
+scalajs/.settings/
+scalajs/.project
+*.classpath

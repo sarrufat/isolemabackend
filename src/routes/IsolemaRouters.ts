@@ -1,12 +1,12 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import  {WordManager,IWord} from '../model/IWord'
+import { WordManager, IWord, FreqIsomorph } from '../model/IWord'
 import * as HTTPSTATUS from 'http-status';
-import {Manager} from '../application/application-module';
+import { Manager } from '../application/application-module';
 
 
 export class IsolemaRouter {
     router: Router
-  //  appManager:Manager;
+    //  appManager:Manager;
     /**
      * Initialize the HeroRouter
      */
@@ -15,10 +15,10 @@ export class IsolemaRouter {
         this.init();
     }
 
-  //  public setAppManager() {
+    //  public setAppManager() {
     //  this.appManager = Manager.getInstance();
     //  console.log( `this.appManage = ${this.appManager}`);
-  //  }
+    //  }
 
     /**
      * GET all Heroes.
@@ -32,12 +32,12 @@ export class IsolemaRouter {
      * endpoints.
      */
     init() {
-        //  this.router.get('/', this.getAll);
         this.router.get('/word/:id', this.getOne);
         this.router.get('/wordLike/:query', this.getWordLike);
         this.router.get('/isomorphisms/:query', this.getIsomorphisms);
-
+        this.router.get('/stats/', this.getStats);
     }
+
     public getOne(req: Request, res: Response, next: NextFunction) {
         let query = req.params.id;
         console.log(`id = ${req.params.id}`);
@@ -55,7 +55,7 @@ export class IsolemaRouter {
         let query = req.params.query;
         if (query && query.length > 3) {
             console.log(`query = ${req.params.query}`);
-              Manager.getInstance().getWordManager().getWordLike(query, function(words: [IWord]) {
+            Manager.getInstance().getWordManager().getWordLike(query, function(words: [IWord]) {
                 if (words) {
                     res.status(HTTPSTATUS.OK).send({ message: 'Success', status: res.status, words });
                 } else {
@@ -63,7 +63,7 @@ export class IsolemaRouter {
                 }
             });
         } else {
-            res.status(HTTPSTATUS.NOT_BAD_REQUEST).send({ message: HTTPSTATUS[400], status: res.status });
+            res.status(HTTPSTATUS.BAD_REQUEST).send({ message: HTTPSTATUS[400], status: res.status });
         }
     }
 
@@ -71,7 +71,7 @@ export class IsolemaRouter {
         let query = req.params.query;
         if (query) {
             console.log(`query = ${req.params.query}`);
-              Manager.getInstance().getWordManager().getIsomorphisms(query, function(result: [IWord]) {
+            Manager.getInstance().getWordManager().getIsomorphisms(query, function(result: [IWord]) {
                 if (result) {
                     res.status(HTTPSTATUS.OK).send({ message: 'Success', status: res.status, result });
                 } else {
@@ -79,13 +79,24 @@ export class IsolemaRouter {
                 }
             });
         } else {
-            res.status(HTTPSTATUS.NOT_BAD_REQUEST).send({ message: HTTPSTATUS[400], status: res.status });
+            res.status(HTTPSTATUS.BAD_REQUEST).send({ message: HTTPSTATUS[400], status: res.status });
         }
     }
+
+    public getStats(req: Request, res: Response, next: NextFunction) {
+        Manager.getInstance().getWordManager().getStats((result: [FreqIsomorph]) => {
+            if (result) {
+                res.status(HTTPSTATUS.OK).send({ message: 'Success', status: res.status, result });
+            } else {
+                res.status(HTTPSTATUS.NOT_FOUND).send({ message: 'No word found', status: res.status });
+            }
+        });
+    }
+
 }
 
 // Create the HeroRouter, and export its configured Express.Router
-  export const wordManager= new IsolemaRouter();
-  wordManager.init();
+export const wordManager = new IsolemaRouter();
+wordManager.init();
 
-  export default wordManager.router;
+export default wordManager.router;

@@ -33,11 +33,17 @@ gulp.task('build-json',function () {
         .pipe(gulp.dest(paths.output));
 });
 
+gulp.task('build-scala',function () {
+    return gulp.src(paths.scalaSrc)
+        .pipe(gulp.dest(paths.scalaDst));
+});
+
 gulp.task('build', function (callback) {
     return runSequence(
         'clean',
         'build-typescript',
         'build-json',
+        'build-scala',
         callback
     );
 });

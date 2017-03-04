@@ -14,7 +14,7 @@ const lemarioCol = 'hashIsomorphisms';
 
 const assert = require('assert');
 
-// import {mapWord}  from '../scala/isolemautils-fastopt';
+const scalaUtil = require('../scala/isolemautils-fastopt')
 
 export interface IWord {
     _id: mongodb.ObjectID;
@@ -22,6 +22,12 @@ export interface IWord {
     isocode: string;
     isoCount: number;
     saoWord: string;
+    mask: string;
+}
+
+export interface FreqIsomorph {
+    _id: string;
+    count: number;
 }
 
 
@@ -41,13 +47,18 @@ export class WordManager {
             });
         });
     }
-    public getWordLike(likestr: string, callback: (words: [IWord]) => void) {
+    public getWordLike(likestr: string, callback: (words: IWord[]) => void) {
+      var woaWord = scalaUtil.scalaUtil().mapWord(likestr);
         this.db.collection(lemarioCol, function(error, words: mongodb.Collection) {
             if (error) { console.error(error); return; }
-            let rexp = RegExp(likestr);
-            words.find<IWord>({ saoWord: rexp }).toArray(function(error, words: [IWord]) {
+            let rexp = RegExp(woaWord);
+            words.find<IWord>({ saoWord: rexp }).toArray(function(error, words: IWord[]) {
                 if (error) { console.error(error); return; }
-                callback(words);
+                var result2 = words.map( w =>  {
+                    w.mask = scalaUtil.Utils().decomposeWordByOccur(w.saoWord);
+                    return w;
+                });
+                callback(result2);
             });
         });
     }
@@ -66,15 +77,19 @@ export class WordManager {
             });
         });
     }
-    public getIsomorphisms(aword: string, callback: (found: [IWord]) => void) {
+    public getIsomorphisms(aword: string, callback: (found: IWord[]) => void) {
         this.getExactWord(aword, (found: IWord) => {
             if (found != null) {
                 console.log(found);
                 this.db.collection(lemarioCol, function(error, collection: mongodb.Collection) {
                     if (error) { console.error(error); return; }
-                    collection.find({ isocode: found.isocode }).toArray(function(error, result: [IWord]) {
+                    collection.find({ isocode: found.isocode }).toArray(function(error, result: IWord[]) {
                         if (error) { console.error(error); return; }
-                        callback(result);
+                        var result2 = result.map( w =>  {
+                            w.mask = scalaUtil.Utils().decomposeWordByOccur(w.saoWord);
+                            return w;
+                        });
+                        callback(result2);
                     });
                 });
             } else {
@@ -82,6 +97,15 @@ export class WordManager {
                 callback(Object.create(null));
             }
         });
-
+    }
+    public getStats(callback: (stats: [FreqIsomorph]) => void) {
+        var col = this.db.collection(lemarioCol);
+        col.aggregate([{ '$project': { 'isocode': 1 } },
+        { '$group': { '_id': "$isocode", 'count': { '$sum': 1 } } },
+        { '$match': { 'count': {'$gt': 1 }}},
+        { '$sort': { count: -1 } }], function(error, result: [FreqIsomorph]) {
+            if (error) { console.error(error); return; }
+              callback(result);
+        });
     }
 }

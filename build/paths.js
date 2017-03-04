@@ -14,4 +14,6 @@ module.exports = {
         './src/**/*.d.ts'
     ],
     testSrc: testRoot + '**/*.ts',
+    scalaSrc: appRoot + 'scala/*.js',
+    scalaDst: outputRoot + 'scala/',
 }
